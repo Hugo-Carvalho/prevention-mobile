@@ -1,0 +1,1 @@
+export { default as /* nome_do_metodo */ } from /* './nomeArq' */

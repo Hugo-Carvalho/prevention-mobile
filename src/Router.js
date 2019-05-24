@@ -1,0 +1,54 @@
+import React from 'react';
+
+import { createAppContainer, createStackNavigator } from 'react-navigation';
+
+import Login from './pages/Login';
+import Register from './pages/Register';
+import Main from './pages/Main';
+import Home from './pages/Home';
+import Maps from './pages/Maps';
+
+import Header from './components/Header';
+import ModalHeader from './components/ModalHeader';
+
+const AppNavigator = createStackNavigator({
+  'Login': {
+    screen: Login,
+    navigationOptions: {
+        header: null
+    }
+  },
+
+  'Register': {
+    screen: Register,
+    navigationOptions: {
+        header: null
+    }
+  },
+
+  'Main': {
+    screen: Main
+  },
+
+  'Home': {
+    screen: Home
+  },
+
+  'Maps': {
+    screen: Maps
+  }
+},
+{
+  defaultNavigationOptions: {
+    headerTitle: <Header title="PREVENTION MOBILE" />,
+    headerLeft: <ModalHeader />,
+    headerTintColor: '#FFF',
+    headerStyle: {
+        backgroundColor: '#132235',
+    }
+  }
+});
+
+const AppContainer = createAppContainer(AppNavigator);
+
+export default AppContainer;
