@@ -32,6 +32,14 @@ export default class Initial extends React.Component {
       this._saveModelAndImei()
     }
 
+    BackgroundGeolocation.configure({
+      notificationTitle: 'Prevention Mobile',
+      notificationText: 'Ativado',
+      notificationIconColor: '#132235',
+      startOnBoot: true,
+      stopOnTerminate: false
+    });
+
     //Geolocation in background
     BackgroundGeolocation.getCurrentLocation(lastLocation => {
       let region = this.state.region;
@@ -78,23 +86,7 @@ export default class Initial extends React.Component {
     });
 
     BackgroundGeolocation.on('location', location => {
-      console.log('[DEBUG] BackgroundGeolocation location', location);
-
-      SystemSetting.isBluetoothEnabled().then((enable) => {
-        enable ? console.log("bluetooth is on") : SystemSetting.switchBluetooth(() => { })
-
-      })
-
-      const { currentUser } = firebase.auth();
-      firebase
-        .database()
-        .ref('/users/' + currentUser.uid + '/devices/' + this.state.uniqueId + '/location')
-        .set(location)
-      const date = new Date();
-      firebase
-        .database()
-        .ref('/users/' + currentUser.uid + '/devices/' + this.state.uniqueId + '/location/date')
-        .set("" + date)
+      console.log('[DEBUG] BackgroundGeolocation location', location)
 
       BackgroundGeolocation.startTask(taskKey => {
         requestAnimationFrame(() => {
@@ -106,6 +98,21 @@ export default class Initial extends React.Component {
           });
 
           this.setState({ location, region });
+
+          SystemSetting.isBluetoothEnabled().then((enable) => {
+            enable ? console.log("bluetooth is on") : SystemSetting.switchBluetooth(() => { })
+          })
+
+          const { currentUser } = firebase.auth();
+          firebase
+            .database()
+            .ref('/users/' + currentUser.uid + '/devices/' + this.state.uniqueId + '/location')
+            .set(location)
+          const date = new Date();
+          firebase
+            .database()
+            .ref('/users/' + currentUser.uid + '/devices/' + this.state.uniqueId + '/location/date')
+            .set("" + date)
           
           BackgroundGeolocation.endTask(taskKey);
         });
@@ -115,11 +122,7 @@ export default class Initial extends React.Component {
     BackgroundGeolocation.on('stationary', (location) => {
       console.log('[DEBUG] BackgroundGeolocation stationary', location);
 
-        SystemSetting.isBluetoothEnabled().then((enable) => {
-          enable ? console.log("bluetooth is on") : SystemSetting.switchBluetooth(() => { })
-      })
-
-      /*BackgroundGeolocation.startTask(taskKey => {
+      BackgroundGeolocation.startTask(taskKey => {
         requestAnimationFrame(() => {
           const stationaries = this.state.stationaries.slice(0);
           if (location.radius) {
@@ -129,13 +132,17 @@ export default class Initial extends React.Component {
               latitudeDelta,
               longitudeDelta
             });
+
+            SystemSetting.isBluetoothEnabled().then((enable) => {
+              enable ? console.log("bluetooth is on") : SystemSetting.switchBluetooth(() => { })
+            })
             
             this.setState({ region });
             // no register location
           }
           BackgroundGeolocation.endTask(taskKey);
         });
-      });*/
+      });
     });
 
     BackgroundGeolocation.checkStatus(({ isRunning }) => {

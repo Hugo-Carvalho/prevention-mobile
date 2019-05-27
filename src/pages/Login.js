@@ -16,7 +16,7 @@ import {
 
 import { connect } from 'react-redux';
 
-import { tryLogin } from '../actions';
+import { tryLogin, saveUserToken } from '../actions';
 
 import FormRow from '../components/FormRow';
 
@@ -34,19 +34,16 @@ class Login extends React.Component {
     }
   }
 
-  componentDidMount(){
-    const config = {
-      apiKey: "AIzaSyDKCCpuw48ChX6Vts-Euzn5jOdqFatkqcY",
-      authDomain: "prevention-mobile-83375.firebaseapp.com",
-      databaseURL: "https://prevention-mobile-83375.firebaseio.com",
-      projectId: "prevention-mobile-83375",
-      storageBucket: "prevention-mobile-83375.appspot.com",
-      messagingSenderId: "204875861402"
-    };
-    if (!firebase.apps.length) {
-      firebase.initializeApp(config);
-    }
-  }
+ /* _signOutAsync(){
+    this.props.removeUserToken()
+    .then(() => {
+      console.log("then");
+      this.props.navigation.replace('Main');
+    })
+    .catch(error => {
+      Alert.alert(error);
+    })
+  }*/
 
   onChangeHandler(field, value){
     this.setState({ 
@@ -60,7 +57,13 @@ class Login extends React.Component {
     
     this.props.tryLogin({ mail, pass })
       .then(() => {
-        this.props.navigation.replace('Main');
+        this.props.saveUserToken()
+          .then(() => {
+            this.props.navigation.replace('Main');
+          })
+          .catch(error => {
+            Alert.alert(error);
+          })
       })
       .catch(error => {
         Alert.alert('Erro no login', this.getMessageByErrorCode(error.code));
@@ -202,4 +205,13 @@ const style = StyleSheet.create({
   }
 });
 
-export default connect(null, { tryLogin })(Login)
+const mapStateToProps = state => ({
+  token: state.token
+});
+
+const mapDispatchToProps = (dispatch, ownProps) => ({
+  saveUserToken: () => dispatch(saveUserToken()),
+  tryLogin: (mail, pass) => dispatch(tryLogin(mail, pass))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login);

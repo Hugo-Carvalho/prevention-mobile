@@ -2,6 +2,7 @@ import React from 'react';
 
 import { createAppContainer, createStackNavigator } from 'react-navigation';
 
+import AuthLoading from './pages/AuthLoading';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Main from './pages/Main';
@@ -12,6 +13,13 @@ import Header from './components/Header';
 import ModalHeader from './components/ModalHeader';
 
 const AppNavigator = createStackNavigator({
+  'AuthLoading': {
+    screen: AuthLoading,
+    navigationOptions: {
+        header: null
+    }
+  },
+
   'Login': {
     screen: Login,
     navigationOptions: {

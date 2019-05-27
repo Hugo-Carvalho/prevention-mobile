@@ -9,15 +9,30 @@ import Thunk from 'redux-thunk';
 
 import { composeWithDevTools } from 'remote-redux-devtools';
 
+import { persistStore, persistReducer } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
+import { PersistGate } from 'redux-persist/integration/react';
+
 import rootReducer from './reducers';
 
-const store = createStore(rootReducer, composeWithDevTools(
+const persistConfig = {
+  key: 'pm-root',
+  storage
+};
+
+const persistedReducer = persistReducer(persistConfig, rootReducer);
+
+const store = createStore(persistedReducer, composeWithDevTools(
   applyMiddleware(Thunk)
 ));
 
+const persistor = persistStore(store);  
+
 const PMApp = prop => (
   <Provider store = {store}>
-    <Router />
+    <PersistGate loading={null} persistor={persistor}>
+      <Router />
+    </PersistGate>
   </Provider>
 );
 
