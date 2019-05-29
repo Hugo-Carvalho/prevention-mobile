@@ -8,9 +8,9 @@ import Register from './pages/Register';
 import Main from './pages/Main';
 import Home from './pages/Home';
 import Maps from './pages/Maps';
+import ModalHeader from './pages/ModalHeader';
 
 import Header from './components/Header';
-import ModalHeader from './components/ModalHeader';
 
 const AppNavigator = createStackNavigator({
   'AuthLoading': {
@@ -44,6 +44,10 @@ const AppNavigator = createStackNavigator({
 
   'Maps': {
     screen: Maps
+  },
+
+  'ModalHeader': {
+    screen: ModalHeader
   }
 },
 {

@@ -16,11 +16,9 @@ import {
 
 import { connect } from 'react-redux';
 
-import { tryLogin, saveUserToken } from '../actions';
+import { login, saveUserToken } from '../actions';
 
 import FormRow from '../components/FormRow';
-
-import firebase from 'firebase';
 
 class Login extends React.Component {
 
@@ -34,17 +32,6 @@ class Login extends React.Component {
     }
   }
 
- /* _signOutAsync(){
-    this.props.removeUserToken()
-    .then(() => {
-      console.log("then");
-      this.props.navigation.replace('Main');
-    })
-    .catch(error => {
-      Alert.alert(error);
-    })
-  }*/
-
   onChangeHandler(field, value){
     this.setState({ 
       [field]: value
@@ -55,7 +42,7 @@ class Login extends React.Component {
     this.setState({ isLoading: true });
     const { mail, pass } = this.state
     
-    this.props.tryLogin({ mail, pass })
+    this.props.login({ mail, pass })
       .then(() => {
         this.props.saveUserToken()
           .then(() => {
@@ -211,7 +198,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   saveUserToken: () => dispatch(saveUserToken()),
-  tryLogin: (mail, pass) => dispatch(tryLogin(mail, pass))
+  login: (mail, pass) => dispatch(login(mail, pass))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);

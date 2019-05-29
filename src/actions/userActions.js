@@ -6,16 +6,21 @@ const userLogin = user => ({
   user
 });
 
-export const USER_LOGOUT = 'USER_LOGOUT';
+export const USER_LOGOUT = 'USER_LOGIN';
 const userLogout = () => ({
-  type: USER_LOGOUT
+  type: USER_LOGOUT,
+  user: null
 });
 
-export const tryLogin = ({ mail, pass }) => dispatch => {
+export const login = ({ mail, pass }) => dispatch => {
   return firebase
     .auth()
     .signInWithEmailAndPassword(mail, pass)
     .then(user => {
       dispatch(userLogin(user));
     })
+}
+
+export const logout = () => dispatch => {
+  dispatch(userLogout());
 }

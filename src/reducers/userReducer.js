@@ -1,11 +1,13 @@
 import { USER_LOGIN, USER_LOGOUT } from '../actions';
 
-export default function userReducer(state = null, action){
+export default function userReducer(state = { 
+  user: {}
+}, action){
   switch(action.type){
     case USER_LOGIN:
-        return action.user;
+      return { ...state, user: action.user };
     case USER_LOGOUT:
-        return null;
+      return { ...state, user: action.user };
     default:
         return state;
   }

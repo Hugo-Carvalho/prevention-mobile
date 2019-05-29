@@ -14,11 +14,15 @@ import {
   StyleSheet 
 } from 'react-native';
 
+import { connect } from 'react-redux';
+
+import { login, saveUserToken } from '../actions';
+
 import FormRow from '../components/FormRow';
 
 import firebase from 'firebase';
 
-export default class Login extends React.Component {
+class Register extends React.Component {
 
   constructor(props){
     super(props);
@@ -36,6 +40,28 @@ export default class Login extends React.Component {
     this.setState({ 
       [field]: value
     });
+  }
+
+  tryLogin() {
+    this.setState({ isLoading: true });
+    const { mail, pass } = this.state
+
+    this.props.login({ mail, pass })
+      .then(() => {
+        this.props.saveUserToken()
+          .then(() => {
+            this.props.navigation.replace('Main');
+          })
+          .catch(error => {
+            Alert.alert(error);
+          })
+      })
+      .catch(error => {
+        Alert.alert('Erro no login', this.getMessageByErrorCode(error.code));
+      })
+      .then(() => {
+        this.setState({ isLoading: false });
+      })
   }
 
   testCPF(strCPF) {
@@ -84,18 +110,14 @@ export default class Login extends React.Component {
             .ref('/users/' + currentUser.uid + '/cpf')
             .set(cpf)
 
-          this.props.navigation.replace('Main');
+          this.tryLogin();
         })
         .catch(error => {
           Alert.alert('Erro no cadastro', this.getMessageByErrorCode(error.code));
         })
         .then(() => {
-          this.setState({ 
-            mail: '',
-            cpf: '',
-            pass: '',
-            cPass: '',
-            isLoading: false 
+          this.setState({
+            isLoading: false
           });
         })
     }
@@ -246,3 +268,14 @@ const style = StyleSheet.create({
     paddingRight: 30
   }
 });
+
+const mapStateToProps = state => ({
+  token: state.token
+});
+
+const mapDispatchToProps = (dispatch, ownProps) => ({
+  saveUserToken: () => dispatch(saveUserToken()),
+  login: (mail, pass) => dispatch(login(mail, pass))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Register);

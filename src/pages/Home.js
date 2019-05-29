@@ -9,9 +9,11 @@ import DeviceInfo from 'react-native-device-info';
 
 import SystemSetting from 'react-native-system-setting';
 
+import { connect } from 'react-redux';
+
 import firebase from 'firebase';
 
-export default class Initial extends React.Component {
+class Home extends React.Component {
 
   constructor(props) {
     super(props);
@@ -103,15 +105,15 @@ export default class Initial extends React.Component {
             enable ? console.log("bluetooth is on") : SystemSetting.switchBluetooth(() => { })
           })
 
-          const { currentUser } = firebase.auth();
+          const currentUser = this.props.user.user;
           firebase
             .database()
-            .ref('/users/' + currentUser.uid + '/devices/' + this.state.uniqueId + '/location')
+            .ref('/users/' + currentUser.user.uid + '/devices/' + this.state.uniqueId + '/location')
             .set(location)
           const date = new Date();
           firebase
             .database()
-            .ref('/users/' + currentUser.uid + '/devices/' + this.state.uniqueId + '/location/date')
+            .ref('/users/' + currentUser.user.uid + '/devices/' + this.state.uniqueId + '/location/date')
             .set("" + date)
           
           BackgroundGeolocation.endTask(taskKey);
@@ -180,13 +182,13 @@ export default class Initial extends React.Component {
     const uniqueId = DeviceInfo.getUniqueID();
     this.setState({ uniqueId });
 
-    const { currentUser } = firebase.auth();
-
+    const currentUser = this.props.user.user;
+    console.log(currentUser.user)
     const IMEI = require('react-native-imei');
     IMEI.getImei().then(imeiList => {
       firebase
         .database()
-        .ref('/users/' + currentUser.uid + '/devices/' + uniqueId + '/imei')
+        .ref('/users/' + currentUser.user.uid + '/devices/' + uniqueId + '/imei')
         .set(imeiList)
     });
 
@@ -194,7 +196,7 @@ export default class Initial extends React.Component {
     
     firebase
       .database()
-      .ref('/users/' + currentUser.uid + '/devices/' + uniqueId + '/model')
+      .ref('/users/' + currentUser.user.uid + '/devices/' + uniqueId + '/model')
       .set(model)
   }
 
@@ -327,3 +329,13 @@ const style = StyleSheet.create({
     elevation: 1
   },
 });
+
+const mapStateToProps = state => ({
+  user: state.user
+});
+
+const mapDispatchToProps = dispatch => ({
+  getUserToken: () => dispatch(getUserToken())
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);

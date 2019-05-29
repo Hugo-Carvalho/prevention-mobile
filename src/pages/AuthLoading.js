@@ -1,14 +1,13 @@
 import React from 'react';
 import {
   ActivityIndicator,
-  AsyncStorage,
   StatusBar,
   StyleSheet,
   View,
 } from 'react-native';
 
 import { connect } from 'react-redux';
-import { getUserToken, removeUserToken } from '../actions';
+import { getUserToken } from '../actions';
 
 import firebase from 'firebase';
 
@@ -33,7 +32,6 @@ class AuthLoading extends React.Component {
 
     this.props.getUserToken()
       .then(() => {
-        console.log(this.props);
         this.props.navigation.replace(this.props.token.token !== null ? 'Main' : 'Login');
       })
       .catch(error => {
@@ -61,12 +59,12 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => ({
-  //token: state.token
+  token: state.token,
+  user: state.user
 });
 
 const mapDispatchToProps = dispatch => ({
-  getUserToken: () => dispatch(getUserToken()),
-  removeUserToken: () => dispatch(removeUserToken())
+  getUserToken: () => dispatch(getUserToken())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AuthLoading);
