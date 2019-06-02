@@ -6,6 +6,7 @@ import AuthLoading from './pages/AuthLoading';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Main from './pages/Main';
+import Setting from './pages/Setting';
 import Home from './pages/Home';
 import Maps from './pages/Maps';
 import ModalHeader from './pages/ModalHeader';
@@ -36,6 +37,10 @@ const AppNavigator = createStackNavigator({
 
   'Main': {
     screen: Main
+  },
+
+  'Setting': {
+    screen: Setting
   },
 
   'Home': {

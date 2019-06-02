@@ -2,6 +2,7 @@ import React from 'react';
 
 import TabBar from 'react-native-tab-bar-interaction'
 
+import Setting from './Setting';
 import Home from './Home';
 import Maps from './Maps';
 
@@ -31,12 +32,12 @@ export default class MenuBar extends React.Component {
           <Home />
         </TabBar.Item>
         <TabBar.Item
-          //icon={require('./tab3.png')}
-          //selectedIcon={require('./tab1.png')}
-          title="Tab3"
+          icon={require('../../assets/icons/setting.png')}
+          selectedIcon={require('../../assets/icons/settingSelected.png')}
+          title="Setting"
           screenBackgroundColor={{ backgroundColor: '#485d72' }}
         >
-          {/*Page Content*/}
+          <Setting />
         </TabBar.Item>
       </TabBar>
     );
