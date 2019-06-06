@@ -6,20 +6,12 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <!-- setBrightness() & setScreenMode() & saveBrightness() -->
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
-    
-    <!-- isWifiEnabled() -->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-    
-    <!-- isBluetoothEnabled() -->
-    <uses-permission android:name="android.permission.BLUETOOTH"/>
-    
-    <!-- * switchWifiSilence() -->
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
-
-    <!-- * switchBluetoothSilence() -->
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+    <uses-feature android:name="android.hardware.bluetooth_le" android:required="false"/>
 
     <application
       android:name=".MainApplication"

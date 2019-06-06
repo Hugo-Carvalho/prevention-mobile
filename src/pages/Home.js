@@ -9,6 +9,8 @@ import DeviceInfo from 'react-native-device-info';
 
 import SystemSetting from 'react-native-system-setting';
 
+import { BleManager } from 'react-native-ble-plx';
+
 import { connect } from 'react-redux';
 
 import firebase from 'firebase';
@@ -22,8 +24,11 @@ class Home extends React.Component {
       switchOn: false,
       region: null,
       uniqueId: null,
-      location: null
+      location: null,
+      deviceBleId: null
     };    
+
+    this.manager = new BleManager();
   }
 
   componentDidMount() {
@@ -51,7 +56,7 @@ class Home extends React.Component {
         latitudeDelta,
         longitudeDelta
       });
-      this.setState({ locations: [lastLocation], region });
+      this.setState({ region });
     }, (error) => {
       setTimeout(() => {
         Alert.alert('Error obtaining current location', JSON.stringify(error));
@@ -102,7 +107,18 @@ class Home extends React.Component {
           this.setState({ location, region });
 
           SystemSetting.isBluetoothEnabled().then((enable) => {
-            enable ? console.log("bluetooth is on") : SystemSetting.switchBluetooth(() => { })
+            if (enable){
+              if (!this.manager.isDeviceConnected(this.state.deviceBleId)){
+                const currentUser = this.props.user.user;
+                firebase
+                  .database()
+                  .ref('/users/' + currentUser.user.uid + '/devices/' + this.state.uniqueId + '/stoled')
+                  .set(true)
+              }
+            } else {
+              this.switcPress();
+              SystemSetting.switchBluetooth(() => { });
+            }
           })
 
           const currentUser = this.props.user.user;
@@ -126,7 +142,6 @@ class Home extends React.Component {
 
       BackgroundGeolocation.startTask(taskKey => {
         requestAnimationFrame(() => {
-          const stationaries = this.state.stationaries.slice(0);
           if (location.radius) {
             const longitudeDelta = 0.01;
             const latitudeDelta = 0.01;
@@ -183,7 +198,6 @@ class Home extends React.Component {
     this.setState({ uniqueId });
 
     const currentUser = this.props.user.user;
-    console.log(currentUser.user)
     const IMEI = require('react-native-imei');
     IMEI.getImei().then(imeiList => {
       firebase
@@ -200,10 +214,42 @@ class Home extends React.Component {
       .set(model)
   }
 
+  scanAndConnect(){
+    SystemSetting.isBluetoothEnabled().then((enable) => {
+      if (enable) {
+        this.manager.startDeviceScan(null, null, (error, device) => {
+          if (error) {
+            this.switcPress();
+            console.log(error);
+            return
+          }
+          console.log(device);
+          if (device.name === 'TI BLE Sensor Tag' || device.name === 'SensorTag') {
+            this.manager.stopDeviceScan();
+
+            device.connect()
+              .then((device) => {
+                this.setState({ deviceBleId: device.id() })
+              });
+          }
+        });
+      } else {
+        this.switcPress();
+        SystemSetting.switchBluetooth(() => { });
+      }
+    })
+  }
+
+  startService(){
+    this.scanAndConnect();
+    BackgroundGeolocation.start();
+  }
+
   toggleTracking() {
     BackgroundGeolocation.checkStatus(({ isRunning, locationServicesEnabled, authorization }) => {
       if (isRunning) {
         BackgroundGeolocation.stop();
+        this.manager.stopDeviceScan();
         return false;
       }
 
@@ -227,17 +273,16 @@ class Home extends React.Component {
       }
 
       if (authorization == 99) {
-        BackgroundGeolocation.start();
+        this.startService();
       } else if (authorization == BackgroundGeolocation.AUTHORIZED) {
-        BackgroundGeolocation.start();
+        this.startService();
       } else {
         Alert.alert(
           'Prevention Mobile requer rastreamento de localização',
           'Por favor, conceda permissão',
           [
             {
-              text: 'Ok',
-              onPress: () => BackgroundGeolocation.start()
+              text: 'Ok'
             }
           ]
         );
