@@ -35,8 +35,8 @@ export default class MenuBar extends React.Component {
           icon={require('../../assets/icons/setting.png')}
           selectedIcon={require('../../assets/icons/settingSelected.png')}
           title="Setting"
-          screenBackgroundColor={{ backgroundColor: '#485d72' }}
-        >
+          screenBackgroundColor={{ backgroundColor: 'rgb(0, 10, 19)' }}
+      >
           <Setting />
         </TabBar.Item>
       </TabBar>

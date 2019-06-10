@@ -196,7 +196,7 @@ const mapStateToProps = state => ({
   token: state.token
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
+const mapDispatchToProps = (dispatch) => ({
   saveUserToken: () => dispatch(saveUserToken()),
   login: (mail, pass) => dispatch(login(mail, pass))
 });

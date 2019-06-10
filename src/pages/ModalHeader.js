@@ -23,9 +23,9 @@ class ModalHeader extends React.Component {
   _signOutAsync = () => {
     this.props.removeUserToken()
       .then(() => {
-        this.props.logout();
         this.setState({ modalVisible: false });
         this.props.navigation.replace('Login');
+        this.props.logout();
       })
       .catch(error => {
         this.setState({ error })

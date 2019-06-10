@@ -3,6 +3,7 @@ package com.prevention_mobile;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.oblador.vectoricons.VectorIconsPackage;
 import com.polidea.reactnativeble.BlePackage;
 import com.ninty.system.setting.SystemSettingPackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
@@ -31,6 +32,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new VectorIconsPackage(),
             new BlePackage(),
             new SystemSettingPackage(),
             new RNDeviceInfo(),
