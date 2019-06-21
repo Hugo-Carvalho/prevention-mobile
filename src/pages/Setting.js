@@ -109,11 +109,6 @@ class Setting extends React.Component {
           <TouchableOpacity style={style.toggleButton} onPress={() => SystemSetting.switchBluetooth(() => { })}>
             <Text>BLUETOOTH</Text>
           </TouchableOpacity>
-          <ToggleBox style={style.toggle} label='DADOS DO CELULAR' arrowColor='#000' arrowDownType="expand-more" arrowUpType="expand-less">
-            <View style={style.containerToggle}>
-              <Text>Hello, how are you?</Text>
-            </View>
-          </ToggleBox>
         </ScrollView>
       </View>
     );

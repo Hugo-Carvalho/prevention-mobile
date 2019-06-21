@@ -1,5 +1,15 @@
 import React from 'react';
-import { View, Alert, Image, Text, ActivityIndicator, Platform, PermissionsAndroid, StyleSheet } from 'react-native';
+import { 
+  View, 
+  Alert, 
+  Image, 
+  Text, 
+  ActivityIndicator, 
+  Platform, 
+  Dimensions,
+  PermissionsAndroid, 
+  StyleSheet 
+} from 'react-native';
 
 import SwitchToggle from 'react-native-switch-toggle';
 
@@ -115,14 +125,17 @@ class Home extends React.Component {
                 this.manager.isDeviceConnected(this.props.ble.ble)
                   .then((stoled) => {
                     if (!stoled){
-                      const currentUser = this.props.user.user;
-                      firebase
-                        .database()
-                        .ref('/users/' + currentUser.user.uid + '/devices/' + this.state.uniqueId + '/stoled')
-                        .set(true)
-                      this.switcPress();
-                      this.props.setStatusBle('stoled');
-                      this.setState({ statusBle: 'stoled', backgroundColor: 'rgb(17,29,49)' });
+                      this.manager.connectToDevice(this.props.ble.ble)
+                        .catch(() => {
+                          const currentUser = this.props.user.user;
+                          firebase
+                            .database()
+                            .ref('/users/' + currentUser.user.uid + '/devices/' + this.state.uniqueId + '/stoled')
+                            .set(true)
+                          this.switcPress();
+                          this.props.setStatusBle('stoled');
+                          this.setState({ statusBle: 'stoled', backgroundColor: 'rgb(17,29,49)' });
+                        })
                     }
                   })
               }
@@ -169,14 +182,17 @@ class Home extends React.Component {
                   this.manager.isDeviceConnected(this.props.ble.ble)
                     .then((stoled) => {
                       if (!stoled) {
-                        const currentUser = this.props.user.user;
-                        firebase
-                          .database()
-                          .ref('/users/' + currentUser.user.uid + '/devices/' + this.state.uniqueId + '/stoled')
-                          .set(true)
-                        this.switcPress();
-                        this.props.setStatusBle('stoled');
-                        this.setState({ statusBle: 'stoled', backgroundColor: 'rgb(17,29,49)' });
+                        this.manager.connectToDevice(this.props.ble.ble)
+                          .catch(() => {
+                            const currentUser = this.props.user.user;
+                            firebase
+                              .database()
+                              .ref('/users/' + currentUser.user.uid + '/devices/' + this.state.uniqueId + '/stoled')
+                              .set(true)
+                            this.switcPress();
+                            this.props.setStatusBle('stoled');
+                            this.setState({ statusBle: 'stoled', backgroundColor: 'rgb(17,29,49)' });
+                          })
                       }
                     })
                 }
@@ -206,11 +222,12 @@ class Home extends React.Component {
         .on('value', function (snapshot) {
           device = snapshot.val();
         });
-
-      if (device.stoled == true) {
-        this.props.setStatusBle('stoled');
-      } else if (this.props.ble.statusBle !== 'scanning' && this.props.ble.statusBle !== 'connected') {
-        this.props.setStatusBle('disconnected');
+      if(device != null){
+        if (device.stoled == true) {
+          this.props.setStatusBle('stoled');
+        } else if (this.props.ble.statusBle !== 'scanning' && this.props.ble.statusBle !== 'connected') {
+          this.props.setStatusBle('disconnected');
+        }
       }
 
       if (this.props.ble.statusBle === 'disconnected') {
@@ -329,21 +346,21 @@ class Home extends React.Component {
     if (this.state.statusBle === 'disconnected') {
       return (
         <View>
-          <Image style={style.animationImage} source={require('../../assets/images/bleSleep.gif')} />
+          <Image resizeMode='cover' style={style.animationImage} source={require('../../assets/images/bleSleep.gif')} />
           <Text style={style.animationTitle}>Dispositivo desconectado</Text>
         </View>
       );
     } else if (this.state.statusBle === 'scanning') {
       return (
         <View>
-          <Image style={style.animationImage} source={require('../../assets/images/bleScan.gif')} />
+          <Image resizeMode='cover' style={style.animationImage} source={require('../../assets/images/bleScan.gif')} />
           <Text style={style.animationTitle}>Buscando dispositivos</Text>
         </View>
       ) 
     } else if (this.state.statusBle === 'connected') {
       return (
         <View>
-          <Image style={style.animationImage} source={require('../../assets/images/bleOk.gif')} />
+          <Image resizeMode='cover' style={style.animationImage} source={require('../../assets/images/bleOk.gif')} />
           <Text style={style.animationTitle}>Dispositivos conectado</Text>
         </View>
       ) 
@@ -512,8 +529,8 @@ const style = StyleSheet.create({
   },
 
   animationImage: {
-    width: 300,
-    height: 300
+    width: Dimensions.get("window").width,
+    height: Dimensions.get("window").height * 0.5
   },
 
   animationTitle: {
